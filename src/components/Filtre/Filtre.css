@@ -1,0 +1,115 @@
+.filtre-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filtre-group {
+    position: relative;
+}
+
+.filtre-btn,
+.filtre-dropdown-btn {
+    padding: 8px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filtre-btn:hover,
+.filtre-dropdown-btn:hover {
+    background: #f9fafb;
+}
+
+.filtre-btn.active {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+.badge {
+    background: #374151;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.filtre-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    margin-top: 5px;
+    min-width: 180px;
+}
+
+.filtre-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.filtre-checkbox:hover {
+    background: #f5f5f5;
+}
+
+.filtre-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.dossier-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dossier-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.filtre-checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s ease;
+}
+
+.filtre-checkbox-inline:hover {
+    background: #f9fafb;
+}
+
+.filtre-checkbox-inline input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}

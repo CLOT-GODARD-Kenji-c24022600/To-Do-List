@@ -1,0 +1,31 @@
+.tri-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tri-container label {
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+.tri-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.tri-select:hover {
+    border-color: #667eea;
+}
+
+.tri-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
