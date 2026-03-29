@@ -1,11 +1,22 @@
 import React, { useState, useContext } from 'react';
 import './Tache.css';
 import { TodoContext } from '../../context/TodoContext';
+import { ETATS } from '../../data/enums';
 
 function Tache({ tache }) {
-    const { getDossiersForTache, updateTache, deleteTache, toggleFiltreDossier } = useContext(TodoContext);
+    const {
+        addRelation,
+        darkMode,
+        dossiers,
+        getDossiersForTache,
+        toggleFiltreDossier,
+        updateTache,
+        deleteTache
+    } = useContext(TodoContext);
     const [expanded, setExpanded] = useState(false);
     const [editMode, setEditMode] = useState(false);
+    const [selectedDossierId, setSelectedDossierId] = useState('');
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         title: tache.title,
         description: tache.description,
@@ -13,9 +24,9 @@ function Tache({ tache }) {
         etat: tache.etat
     });
 
-    const dossiers = getDossiersForTache(tache.id);
-    const first2Folders = dossiers.slice(0, 2);
-    const allFolders = dossiers;
+    const linkedDossiers = getDossiersForTache(tache.id);
+    const first2Folders = linkedDossiers.slice(0, 2);
+    const allFolders = linkedDossiers;
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -23,12 +34,18 @@ function Tache({ tache }) {
     };
 
     const handleEdit = () => {
+        setError('');
         setEditMode(true);
     };
 
     const handleSave = () => {
-        updateTache(tache.id, formData);
-        setEditMode(false);
+        setError('');
+        try {
+            updateTache(tache.id, formData);
+            setEditMode(false);
+        } catch (updateError) {
+            setError(updateError.message);
+        }
     };
 
     const handleCancel = () => {
@@ -38,6 +55,7 @@ function Tache({ tache }) {
             date_echeance: tache.date_echeance,
             etat: tache.etat
         });
+        setError('');
         setEditMode(false);
     };
 
@@ -49,10 +67,26 @@ function Tache({ tache }) {
         });
     };
 
+    const handleAddDossier = () => {
+        if (!selectedDossierId) {
+            return;
+        }
+
+        addRelation(tache.id, Number(selectedDossierId));
+        setSelectedDossierId('');
+    };
+
+    const availableDossiers = dossiers.filter((dossier) => {
+        return !allFolders.find((linkedDossier) => linkedDossier.id === dossier.id);
+    });
+
     if (editMode) {
         return (
             <div className="card border-start border-3 mb-2">
                 <div className="card-body">
+                    {error && (
+                        <div className="alert alert-danger py-2">{error}</div>
+                    )}
                     <div className="mb-3">
                         <label className="form-label">Titre</label>
                         <input
@@ -61,6 +95,7 @@ function Tache({ tache }) {
                             className="form-control"
                             value={formData.title}
                             onChange={handleInputChange}
+                            minLength={5}
                         />
                     </div>
 
@@ -94,11 +129,11 @@ function Tache({ tache }) {
                             value={formData.etat}
                             onChange={handleInputChange}
                         >
-                            <option value="Nouveau">Nouveau</option>
-                            <option value="En cours">En cours</option>
-                            <option value="En attente">En attente</option>
-                            <option value="Réussi">Réussi</option>
-                            <option value="Abandonné">Abandonné</option>
+                            {Object.values(ETATS).map((etat) => (
+                                <option key={etat} value={etat}>
+                                    {etat}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -120,6 +155,20 @@ function Tache({ tache }) {
             'Abandonné': '#dc3545'
         };
         const color = colorMap[tache.etat] || '#6c757d';
+
+        if (darkMode) {
+            return {
+                fontSize: '12px',
+                padding: '6px 10px',
+                fontWeight: '700',
+                color: '#ffffff',
+                border: `2px solid ${color}`,
+                borderRadius: '6px',
+                backgroundColor: color,
+                display: 'inline-block'
+            };
+        }
+
         return {
             fontSize: '12px',
             padding: '6px 10px',
@@ -147,7 +196,7 @@ function Tache({ tache }) {
                             marginRight: '10px',
                             transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
                             transition: 'transform 0.15s',
-                            color: '#333'
+                            color: darkMode ? '#dbe4f2' : '#333'
                         }}
                     >
                         ▶
@@ -181,27 +230,28 @@ function Tache({ tache }) {
                                     border: `2px solid ${dossier.color}`,
                                     borderRadius: '4px',
                                     cursor: 'pointer',
-                                    backgroundColor: '#fff',
+                                    backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.06)' : '#fff',
                                     transition: 'all 0.2s ease'
                                 }}
                                 className="dossier-badge"
                                 title="Cliquez pour filtrer"
+                                onClick={() => toggleFiltreDossier(dossier.id)}
                             >
                                 {dossier.title}
                             </span>
                         ))}
-                        {dossiers.length > 2 && (
+                        {linkedDossiers.length > 2 && (
                             <span style={{ 
                                 display: 'inline-block',
                                 fontSize: '14px', 
                                 padding: '8px 12px', 
                                 fontWeight: '600',
-                                color: '#666',
-                                border: '2px solid #ddd',
+                                color: darkMode ? '#dbe4f2' : '#666',
+                                border: darkMode ? '2px solid #607397' : '2px solid #ddd',
                                 borderRadius: '4px',
-                                backgroundColor: '#fff'
+                                backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.04)' : '#fff'
                             }}>
-                                +{dossiers.length - 2}
+                                +{linkedDossiers.length - 2}
                             </span>
                         )}
                     </div>
@@ -234,7 +284,7 @@ function Tache({ tache }) {
                                             border: `2px solid ${dossier.color}`,
                                             borderRadius: '4px',
                                             cursor: 'pointer',
-                                            backgroundColor: '#fff'
+                                            backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.06)' : '#fff'
                                         }}
                                         onClick={() => toggleFiltreDossier(dossier.id)}
                                         title="Filtrer sur ce dossier"
@@ -246,12 +296,39 @@ function Tache({ tache }) {
                         </div>
                     )}
 
+                    {availableDossiers.length > 0 && (
+                        <div className="mb-3">
+                            <strong>Ajouter un dossier</strong>
+                            <div className="d-flex gap-2 mt-2">
+                                <select
+                                    className="form-select form-select-sm"
+                                    value={selectedDossierId}
+                                    onChange={(e) => setSelectedDossierId(e.target.value)}
+                                >
+                                    <option value="">Sélectionner un dossier</option>
+                                    {availableDossiers.map((dossier) => (
+                                        <option key={dossier.id} value={dossier.id}>
+                                            {dossier.title}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    className="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    onClick={handleAddDossier}
+                                >
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {tache.equipiers && tache.equipiers.length > 0 && (
                         <div className="mb-3">
                             <strong>Équipiers</strong>
                             <ul className="small mb-0 mt-1">
                                 {tache.equipiers.map((equipier, idx) => (
-                                    <li key={idx}>{equipier.name || equipier}</li>
+                                    <li key={idx}>{equipier}</li>
                                 ))}
                             </ul>
                         </div>

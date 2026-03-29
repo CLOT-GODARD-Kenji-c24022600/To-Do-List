@@ -17,3 +17,7 @@ h5.text-dark {
     color: #212529 !important;
     font-weight: 600;
 }
+
+body.theme-dark h5.text-dark {
+    color: #ffffff !important;
+}

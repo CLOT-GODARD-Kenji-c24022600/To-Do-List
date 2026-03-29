@@ -1,46 +1,47 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import './Todo.css';
 import { TodoContext } from '../../context/TodoContext';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 import List from '../List/List';
 import Filtre from '../Filtre/Filtre';
 import Tri from '../Tri/Tri';
 import Dossiers from '../Dossiers/Dossiers';
+import Footer from '../Footer/Footer';
+import Header from '../Header/Header';
 
 function Todo() {
-    const { modeVue } = useContext(TodoContext);
+    // On récupère le mode de vue (taches ou dossiers) depuis le contexte
+    const { modeVue, darkMode } = useContext(TodoContext);
+
+    useEffect(() => {
+        document.body.classList.toggle('theme-dark', darkMode);
+    }, [darkMode]);
 
     return (
-        <div className="d-flex flex-column vh-100">
+        <div className="d-flex flex-column min-vh-100 bg-light">
             <Header />
             
-            {modeVue === 'taches' && (
-                <>
-                    <div className="bg-white border-bottom py-2">
-                        <div className="container-fluid">
-                            <div className="d-flex gap-3 flex-wrap align-items-center">
-                                <div style={{ minWidth: '250px' }}>
-                                    <Tri />
-                                </div>
-                                <div className="flex-grow-1">
-                                    <Filtre />
-                                </div>
+            <main className="container-fluid flex-grow-1 py-4">
+                {modeVue === 'taches' ? (
+                    // --- VUE DES TACHES ---
+                    <div className="mx-auto" style={{ maxWidth: '1000px' }}>
+                        <div className="row align-items-center mb-3">
+                            <div className="col-md-8 mb-2 mb-md-0">
+                                <Filtre />
+                            </div>
+                            <div className="col-md-4">
+                                <Tri />
                             </div>
                         </div>
-                    </div>
-                    <div className="flex-grow-1 overflow-auto">
                         <List />
                     </div>
-                </>
-            )}
+                ) : (
+                    // --- VUE DES DOSSIERS ---
+                    <div className="mx-auto" style={{ maxWidth: '1000px' }}>
+                        <Dossiers />
+                    </div>
+                )}
+            </main>
 
-            {modeVue === 'dossiers' && (
-                <div className="flex-grow-1 overflow-auto">
-                    <Dossiers />
-                </div>
-            )}
-            
             <Footer />
         </div>
     );
