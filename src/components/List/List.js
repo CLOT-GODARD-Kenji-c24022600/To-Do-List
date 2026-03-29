@@ -4,9 +4,11 @@ import { TodoContext } from '../../context/TodoContext';
 import Tache from '../Tache/Tache';
 
 function List() {
-    const { getTacheTriees } = useContext(TodoContext);
+    // 1. On met || {} au cas où le contexte n'est pas encore prêt
+    const { getTacheTriees } = useContext(TodoContext) || {};
 
-    const tachesAffichees = getTacheTriees();
+    // 2. On vérifie que la fonction existe, et on s'assure qu'elle renvoie toujours un tableau (même vide)
+    const tachesAffichees = getTacheTriees ? (getTacheTriees() || []) : [];
 
     return (
         <div className="container-fluid" style={{ padding: '20px 15px' }}>
