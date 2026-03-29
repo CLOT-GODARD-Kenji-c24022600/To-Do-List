@@ -1,0 +1,19 @@
+/* Bootstrap compatible - minimal overrides */
+
+.tache-toggle {
+    color: #212529;
+    transition: background-color 0.15s ease;
+}
+
+.tache-toggle:hover {
+    background-color: #f8f9fa !important;
+}
+
+.tache-toggle:focus {
+    outline: none;
+}
+
+h5.text-dark {
+    color: #212529 !important;
+    font-weight: 600;
+}
